@@ -15,16 +15,16 @@ public class Game {
         canvas.draw();
         ball = new Ball();
 
-        p1 = new Player(ControlScheme.WAD,50.0,50.0);
-        p2 = new Player(ControlScheme.ARROWS,1200.0,50.0);
+        p1 = new Player(ControlScheme.WAD,50.0,500.0);
+        p2 = new Player(ControlScheme.ARROWS,1200.0,500.0);
     }
 
     public void update(long millis) throws InterruptedException {
         while (true) {
             Thread.sleep(millis);
-            ball.update();
             p1.update();
             p2.update();
+            ball.update(p1,p2);
             ball.getKickCollisionsForLeftPlayer(p1.getPlayerImage());
             ball.getKickCollisionsForRightPlayer(p2.getPlayerImage());
         }

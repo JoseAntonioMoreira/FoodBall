@@ -1,7 +1,6 @@
+import org.academiadecodigo.simplegraphics.graphics.Canvas;
 import org.academiadecodigo.simplegraphics.graphics.Ellipse;
 import org.academiadecodigo.simplegraphics.pictures.Picture;
-
-import java.util.EventListener;
 
 public class Ball {
     public static final int BALL_DIAMETER = 40;
@@ -41,11 +40,11 @@ public class Ball {
         this.velocityY = vy;
     }
 
-    public void update() {
+    public void update(Player p1, Player p2) {
 
         movement();
 
-        checkCollisionsWithWalls();
+        checkCollisionsWithWalls(p1,p2);
 
         show();
     }
@@ -59,7 +58,7 @@ public class Ball {
         velocityX *= FRICTION;
     }
 
-    private void checkCollisionsWithWalls() {
+    private void checkCollisionsWithWalls(Player p1, Player p2) {
         // Check for collision with the floor (bottom)
         if (y + BALL_DIAMETER >= Game.CANVAS_HEIGHT) {
             y = Game.CANVAS_HEIGHT - BALL_DIAMETER;
@@ -76,12 +75,34 @@ public class Ball {
         if (x <= 0) {
             x = 0;
             velocityX = -velocityX * BOUNCINESS;
+
+            // Check if it's a goal (crosses the goal line on the left wall)
+            if (y >= Game.CANVAS_HEIGHT / 2) {
+                System.out.println("Goal on the left side!");
+                x = Game.CANVAS_WIDTH/2;
+                y = BALL_DIAMETER;
+                setVelocity(-5, 0);
+                p1.resetPlayer();
+                p2.resetPlayer();
+                // Add any additional logic for scoring a goal
+            }
         }
 
         // Check for collision with the right wall
         if (x + BALL_DIAMETER >= Game.CANVAS_WIDTH) {
             x = Game.CANVAS_WIDTH - BALL_DIAMETER;
             velocityX = -velocityX * BOUNCINESS;
+
+            // Check if it's a goal (crosses the goal line on the right wall)
+            if (y >= Game.CANVAS_HEIGHT / 2) {
+                System.out.println("Goal on the right side!");
+                x = Game.CANVAS_WIDTH/2;
+                y = BALL_DIAMETER;
+                setVelocity(5, 0);
+                p1.resetPlayer();
+                p2.resetPlayer();
+                // Add any additional logic for scoring a goal
+            }
         }
     }
 

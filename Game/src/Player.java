@@ -9,6 +9,8 @@ import org.academiadecodigo.simplegraphics.pictures.Picture;
 public class Player implements KeyboardHandler {
     public static final Integer PLAYER_WIDTH = 70;
     public static final Integer PLAYER_HEIGHT = 100;
+    private double initialX;
+    private double initialY;
     private double x;
     private double y;
     private double velocityX;
@@ -24,6 +26,8 @@ public class Player implements KeyboardHandler {
         this.controlScheme = controlScheme;
         this.x = x;
         this.y = y;
+        this.initialX = x;
+        this.initialY = y;
         playerImage = new Picture(PLAYER_WIDTH, PLAYER_HEIGHT);
         playerImage.draw();
         this.keyboard = new Keyboard(this);
@@ -37,6 +41,11 @@ public class Player implements KeyboardHandler {
 
     public double getY() {
         return this.y;
+    }
+    
+    public void resetPlayer(){
+        x = initialX;
+        y = initialY;
     }
 
     private void initKeyboard() {
