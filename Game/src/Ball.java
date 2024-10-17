@@ -100,10 +100,10 @@ public class Ball {
         return distanceSquared <= (BALL_DIAMETER / 2) * (BALL_DIAMETER / 2);
     }
 
-    private String getCollisionsForKick(Picture player) {
+    private int getCollisionsForKick(Picture player) {
         // If they are not touching, return "No collision"
         if (!isTouching(player)) {
-            return "No collision";
+            return 0;
         }
 
         double ballCenterX = x + BALL_DIAMETER / 2;
@@ -132,28 +132,28 @@ public class Ball {
 
         // Return which side of the rectangle is being touched
         if (maxDot == dotUp) {
-            return "Top";
+            return 1; //top
         } else if (maxDot == dotDown) {
-            return "Bottom";
+            return 2; //down
         } else if (maxDot == dotLeft) {
-            return "Left";
+            return 3;//left
         } else {
-            return "Right";
+            return 4;//right
         }
     }
 
     public void getKickCollisionsForLeftPlayer(Picture leftPlayer) {
         switch (getCollisionsForKick(leftPlayer)) {
-            case "Top":
+            case 1://top
                 setVelocity(10, -20);
                 break;
-            case "Bottom":
+            case 2://down
                 setVelocity(10, -10);
                 break;
-            case "Left":
+            case 3://left
                 setVelocity(20, -5);
                 break;
-            case "Right":
+            case 4://right
                 setVelocity(20, -5);
                 break;
         }
@@ -161,16 +161,16 @@ public class Ball {
 
     public void getKickCollisionsForRightPlayer(Picture leftPlayer) {
         switch (getCollisionsForKick(leftPlayer)) {
-            case "Top":
+            case 1://top
                 setVelocity(-10, -20);
                 break;
-            case "Bottom":
+            case 2://down
                 setVelocity(-10, -10);
                 break;
-            case "Left":
+            case 3://left
                 setVelocity(-20, -5);
                 break;
-            case "Right":
+            case 4://right
                 setVelocity(-20, -5);
                 break;
         }

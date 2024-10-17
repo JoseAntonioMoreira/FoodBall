@@ -14,6 +14,8 @@ public class Game {
         canvas = new Rectangle(10, 10, CANVAS_WIDTH, CANVAS_HEIGHT);
         canvas.draw();
         ball = new Ball();
+
+        
         player = new Picture(50,50);
         player.translate(600, 600);
         player.draw();
@@ -21,7 +23,7 @@ public class Game {
 
     public void update(long millis) throws InterruptedException {
         while (true) {
-            Thread.sleep(millis);// frame rate, if it's too slow/choppy change to smaller number.
+            Thread.sleep(millis);
             ball.update();
 
             ball.getKickCollisionsForRightPlayer(player);
