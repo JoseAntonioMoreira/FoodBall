@@ -1,4 +1,3 @@
-import org.academiadecodigo.simplegraphics.graphics.Canvas;
 import org.academiadecodigo.simplegraphics.graphics.Ellipse;
 import org.academiadecodigo.simplegraphics.pictures.Picture;
 
@@ -6,8 +5,7 @@ public class Ball {
     public static final int BALL_DIAMETER = 40;
     public static final double GRAVITY = 0.2; // bigger the quicker is falls (default value: 0.2)
     public static final double BOUNCINESS = 0.9; // 1 or more infinite bouncing ---- 0 no bouncing (default value: 0.9)
-    public static final double FRICTION = 0.996;// 0 full friction stops instantly ---- 1 infinite movement(default
-                                                // value: 0.996)
+    public static final double FRICTION = 0.996;// 0 full friction stops instantly ---- 1 infinite movement(default value: 0.996)
 
     // Ball properties
     private double x;
