@@ -1,6 +1,8 @@
 import org.academiadecodigo.simplegraphics.graphics.Ellipse;
 import org.academiadecodigo.simplegraphics.pictures.Picture;
 
+import java.util.EventListener;
+
 public class Ball {
     public static final int BALL_DIAMETER = 30;
     public static final double GRAVITY = 0.2; // bigger the quicker is falls (default value: 0.2)
@@ -79,11 +81,10 @@ public class Ball {
         // Check for collision with the right wall
         if (x + BALL_DIAMETER >= Game.CANVAS_WIDTH) {
             x = Game.CANVAS_WIDTH - BALL_DIAMETER;
-            velocityX = -velocityX * BOUNCINESS;
         }
     }
 
-    private boolean isTouching(Picture player) {
+    private boolean isTouching(Ellipse player) {
 
         double ballCenterX = x + BALL_DIAMETER / 2;
         double ballCenterY = y + BALL_DIAMETER / 2;
@@ -100,7 +101,7 @@ public class Ball {
         return distanceSquared <= (BALL_DIAMETER / 2) * (BALL_DIAMETER / 2);
     }
 
-    private int getCollisionsForKick(Picture player) {
+    private int getCollisionsForKick(Ellipse player) {
         // If they are not touching, return "No collision"
         if (!isTouching(player)) {
             return 0;
@@ -142,7 +143,7 @@ public class Ball {
         }
     }
 
-    public void getKickCollisionsForLeftPlayer(Picture leftPlayer) {
+    public void getKickCollisionsForLeftPlayer(Ellipse leftPlayer) {
         switch (getCollisionsForKick(leftPlayer)) {
             case 1://top
                 setVelocity(10, -20);
@@ -159,7 +160,7 @@ public class Ball {
         }
     }
 
-    public void getKickCollisionsForRightPlayer(Picture leftPlayer) {
+    public void getKickCollisionsForRightPlayer(Ellipse leftPlayer) {
         switch (getCollisionsForKick(leftPlayer)) {
             case 1://top
                 setVelocity(-10, -20);
