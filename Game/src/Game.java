@@ -14,9 +14,6 @@ public class Game {
         canvas = new Rectangle(10, 10, CANVAS_WIDTH, CANVAS_HEIGHT);
         canvas.draw();
         ball = new Ball();
-        //player = new Picture(50,50);
-        //player.translate(600, 600);
-        //player.draw();
 
         p1 = new Player(ControlScheme.WAD,50.0,50.0);
         p2 = new Player(ControlScheme.ARROWS,1200.0,50.0);

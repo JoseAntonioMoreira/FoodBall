@@ -4,7 +4,7 @@ import org.academiadecodigo.simplegraphics.pictures.Picture;
 import java.util.EventListener;
 
 public class Ball {
-    public static final int BALL_DIAMETER = 30;
+    public static final int BALL_DIAMETER = 40;
     public static final double GRAVITY = 0.2; // bigger the quicker is falls (default value: 0.2)
     public static final double BOUNCINESS = 0.9; // 1 or more infinite bouncing ---- 0 no bouncing (default value: 0.9)
     public static final double FRICTION = 0.996;// 0 full friction stops instantly ---- 1 infinite movement(default
@@ -81,10 +81,11 @@ public class Ball {
         // Check for collision with the right wall
         if (x + BALL_DIAMETER >= Game.CANVAS_WIDTH) {
             x = Game.CANVAS_WIDTH - BALL_DIAMETER;
+            velocityX = -velocityX * BOUNCINESS;
         }
     }
 
-    private boolean isTouching(Ellipse player) {
+    private boolean isTouching(Picture player) {
 
         double ballCenterX = x + BALL_DIAMETER / 2;
         double ballCenterY = y + BALL_DIAMETER / 2;
@@ -101,7 +102,7 @@ public class Ball {
         return distanceSquared <= (BALL_DIAMETER / 2) * (BALL_DIAMETER / 2);
     }
 
-    private int getCollisionsForKick(Ellipse player) {
+    private int getCollisionsForKick(Picture player) {
         // If they are not touching, return "No collision"
         if (!isTouching(player)) {
             return 0;
@@ -133,45 +134,45 @@ public class Ball {
 
         // Return which side of the rectangle is being touched
         if (maxDot == dotUp) {
-            return 1; //top
+            return 1; // top
         } else if (maxDot == dotDown) {
-            return 2; //down
+            return 2; // down
         } else if (maxDot == dotLeft) {
-            return 3;//left
+            return 3;// left
         } else {
-            return 4;//right
+            return 4;// right
         }
     }
 
-    public void getKickCollisionsForLeftPlayer(Ellipse leftPlayer) {
+    public void getKickCollisionsForLeftPlayer(Picture leftPlayer) {
         switch (getCollisionsForKick(leftPlayer)) {
-            case 1://top
+            case 1:// top
                 setVelocity(10, -20);
                 break;
-            case 2://down
+            case 2:// down
                 setVelocity(10, -10);
                 break;
-            case 3://left
+            case 3:// left
                 setVelocity(20, -5);
                 break;
-            case 4://right
+            case 4:// right
                 setVelocity(20, -5);
                 break;
         }
     }
 
-    public void getKickCollisionsForRightPlayer(Ellipse leftPlayer) {
+    public void getKickCollisionsForRightPlayer(Picture leftPlayer) {
         switch (getCollisionsForKick(leftPlayer)) {
-            case 1://top
+            case 1:// top
                 setVelocity(-10, -20);
                 break;
-            case 2://down
+            case 2:// down
                 setVelocity(-10, -10);
                 break;
-            case 3://left
+            case 3:// left
                 setVelocity(-20, -5);
                 break;
-            case 4://right
+            case 4:// right
                 setVelocity(-20, -5);
                 break;
         }
