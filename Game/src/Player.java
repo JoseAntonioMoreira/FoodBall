@@ -9,6 +9,9 @@ import org.academiadecodigo.simplegraphics.pictures.Picture;
 public class Player implements KeyboardHandler {
     public static final Integer PLAYER_WIDTH = 70;
     public static final Integer PLAYER_HEIGHT = 100;
+    private static final double GRAVITY = 1;
+    private static final double FRICTION = 0.9;
+
     private double initialX;
     private double initialY;
     private double x;
@@ -16,10 +19,6 @@ public class Player implements KeyboardHandler {
     private double velocityX;
     private double velocityY;
     private String imgPath;
-    private int offsetX;
-    private int offsetY;
-    private static final double GRAVITY = 0.2;
-    private static final double FRICTION = 0.9;
 
     private final Keyboard keyboard;
     private Picture playerImage;
@@ -29,8 +28,6 @@ public class Player implements KeyboardHandler {
         this.controlScheme = controlScheme;
         this.x = x;
         this.y = y;
-        this.offsetX = offsetX;
-        this.offsetY = offsetY;
         this.imgPath = imgPath;
         this.initialX = x;
         this.initialY = y;
@@ -39,7 +36,11 @@ public class Player implements KeyboardHandler {
         playerImage.draw();
         this.keyboard = new Keyboard(this);
 
-        this.initKeyboard();
+        initKeyboard();
+    }
+
+    public Picture getPlayerImage() {
+        return playerImage;
     }
 
     public double getX() {
@@ -53,72 +54,6 @@ public class Player implements KeyboardHandler {
     public void resetPlayer() {
         x = initialX;
         y = initialY;
-    }
-
-    private void initKeyboard() {
-        KeyboardEvent moveRight = new KeyboardEvent();
-        if (this.controlScheme == ControlScheme.ARROWS) {
-            moveRight.setKey(KeyboardEvent.KEY_RIGHT);
-        } else if (this.controlScheme == ControlScheme.WAD) {
-            moveRight.setKey(KeyboardEvent.KEY_D);
-        }
-        moveRight.setKeyboardEventType(KeyboardEventType.KEY_PRESSED);
-
-        this.keyboard.addEventListener(moveRight);
-
-        KeyboardEvent moveLeft = new KeyboardEvent();
-        if (this.controlScheme == ControlScheme.ARROWS) {
-            moveLeft.setKey(KeyboardEvent.KEY_LEFT);
-        } else if (this.controlScheme == ControlScheme.WAD) {
-            moveLeft.setKey(KeyboardEvent.KEY_A);
-        }
-        moveLeft.setKeyboardEventType(KeyboardEventType.KEY_PRESSED);
-
-        this.keyboard.addEventListener(moveLeft);
-
-        KeyboardEvent jump = new KeyboardEvent();
-        if (this.controlScheme == ControlScheme.ARROWS) {
-            jump.setKey(KeyboardEvent.KEY_UP);
-        } else if (this.controlScheme == ControlScheme.WAD) {
-            jump.setKey(KeyboardEvent.KEY_W);
-        }
-        jump.setKeyboardEventType(KeyboardEventType.KEY_PRESSED);
-
-        this.keyboard.addEventListener(jump);
-
-        KeyboardEvent exit = new KeyboardEvent();
-
-        exit.setKey(KeyboardEvent.KEY_H);
-
-        exit.setKeyboardEventType(KeyboardEventType.KEY_PRESSED);
-
-        this.keyboard.addEventListener(exit);
-    }
-
-    @Override
-    public void keyPressed(KeyboardEvent keyboardEvent) {
-        switch (keyboardEvent.getKey()) {
-            case KeyboardEvent.KEY_RIGHT:
-            case KeyboardEvent.KEY_D:
-                // playerImage.translate(50, 0);
-                this.velocityX = 15.0;
-                break;
-            case KeyboardEvent.KEY_LEFT:
-            case KeyboardEvent.KEY_A:
-                // playerImage.translate(-50, 0);
-                this.velocityX = -15.0;
-                break;
-            case KeyboardEvent.KEY_UP:
-            case KeyboardEvent.KEY_W:
-                // playerImage.translate(0, -100);
-                if (y == (Game.CANVAS_HEIGHT - PLAYER_HEIGHT)) {
-                    this.velocityY = -10.0;
-                }
-                break;
-            case KeyboardEvent.KEY_H:
-                System.exit(0);
-                break;
-        }
     }
 
     public void update() {
@@ -158,16 +93,74 @@ public class Player implements KeyboardHandler {
 
     private void show() {
         playerImage.delete();
-        double deltaX = (x - playerImage.getX());
-        double deltaY = y - playerImage.getY();
-        if (Math.abs(deltaX) > 1 || Math.abs(deltaY) > 1) {
-            playerImage.translate(deltaX, deltaY);
-        }
+        updateImage();
         playerImage.draw();
     }
 
-    public Picture getPlayerImage() {
-        return playerImage;
+    private void updateImage() {
+        double xDifference = (x - playerImage.getX());
+        double yDifference = y - playerImage.getY();
+        if (Math.abs(xDifference) > 1 || Math.abs(yDifference) > 1) {
+            playerImage.translate(xDifference, yDifference);
+        }
+    }
+
+    private void initKeyboard() {
+        if (this.controlScheme == ControlScheme.ARROWS) {
+            setUpKey(KeyboardEvent.KEY_RIGHT, KeyboardEventType.KEY_PRESSED);
+        } else if (this.controlScheme == ControlScheme.WAD) {
+            setUpKey(KeyboardEvent.KEY_D, KeyboardEventType.KEY_PRESSED);
+        }
+
+        if (this.controlScheme == ControlScheme.ARROWS) {
+            setUpKey(KeyboardEvent.KEY_LEFT, KeyboardEventType.KEY_PRESSED);
+        } else if (this.controlScheme == ControlScheme.WAD) {
+            setUpKey(KeyboardEvent.KEY_A, KeyboardEventType.KEY_PRESSED);
+        }
+
+        if (this.controlScheme == ControlScheme.ARROWS) {
+            setUpKey(KeyboardEvent.KEY_UP, KeyboardEventType.KEY_PRESSED);
+        } else if (this.controlScheme == ControlScheme.WAD) {
+            setUpKey(KeyboardEvent.KEY_W, KeyboardEventType.KEY_PRESSED);
+        }
+
+        setUpKey(KeyboardEvent.KEY_H, KeyboardEventType.KEY_PRESSED);
+    }
+
+    private void setUpKey(int keyEvent, KeyboardEventType keyType) {
+
+        KeyboardEvent key = new KeyboardEvent();
+        key.setKey(keyEvent);
+        key.setKeyboardEventType(keyType);
+        keyboard.addEventListener(key);
+    }
+
+    @Override
+    public void keyPressed(KeyboardEvent keyboardEvent) {
+        switch (keyboardEvent.getKey()) {
+            case KeyboardEvent.KEY_RIGHT:
+            case KeyboardEvent.KEY_D:
+                velocityX = 15.0;
+                break;
+            case KeyboardEvent.KEY_LEFT:
+            case KeyboardEvent.KEY_A:
+                velocityX = -15.0;
+                break;
+            case KeyboardEvent.KEY_UP:
+            case KeyboardEvent.KEY_W:
+                jump();
+                break;
+            case KeyboardEvent.KEY_H:
+                System.exit(0);// (Only works in .jar) Exit application beacuse alt+f4 doesn't really close the
+                               // application.
+                break;
+        }
+    }
+
+    private void jump() {
+        if (y == (Game.CANVAS_HEIGHT - PLAYER_HEIGHT)) {
+            this.velocityY = -25.0;
+        }
     }
 
     @Override

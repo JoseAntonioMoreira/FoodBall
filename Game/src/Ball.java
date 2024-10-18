@@ -5,7 +5,8 @@ public class Ball {
     public static final int BALL_DIAMETER = 40;
     public static final double GRAVITY = 0.2; // bigger the quicker is falls (default value: 0.2)
     public static final double BOUNCINESS = 0.9; // 1 or more infinite bouncing ---- 0 no bouncing (default value: 0.9)
-    public static final double FRICTION = 0.996;// 0 full friction stops instantly ---- 1 infinite movement(default value: 0.996)
+    public static final double FRICTION = 0.996;// 0 full friction stops instantly ---- 1 infinite movement(default
+                                                // value: 0.996)
 
     // Ball properties
     private double x;
@@ -15,7 +16,7 @@ public class Ball {
     private Ellipse ballVisual;
 
     public Ball() {
-        x = Game.CANVAS_WIDTH / 2;
+        x = Game.CANVAS_WIDTH / 2 + 20;
         y = Game.CANVAS_HEIGHT / 2;
         ballVisual = new Ellipse(x, y, BALL_DIAMETER, BALL_DIAMETER);
     }
@@ -42,9 +43,12 @@ public class Ball {
 
         movement();
 
-        checkCollisionsWithWalls(p1,p2);
+        checkCollisionsWithWalls(p1, p2);
 
         show();
+
+        getKickCollisionsForLeftPlayer(p1.getPlayerImage());
+        getKickCollisionsForRightPlayer(p2.getPlayerImage());
     }
 
     private void movement() {
@@ -74,15 +78,7 @@ public class Ball {
             x = 0;
             velocityX = -velocityX * BOUNCINESS;
 
-            // Check if it's a goal (crosses the goal line on the left wall)
-            if (y >= Game.CANVAS_HEIGHT / 2 + 100) {
-                System.out.println("Goal on the left side!");
-                x = Game.CANVAS_WIDTH/2;
-                y = BALL_DIAMETER;
-                setVelocity(-5, 0);
-                p1.resetPlayer();
-                p2.resetPlayer();
-            }
+            checkGoal(p1, p2, -5);
         }
 
         // Check for collision with the right wall
@@ -90,30 +86,48 @@ public class Ball {
             x = (Game.CANVAS_WIDTH + 70) - BALL_DIAMETER;
             velocityX = -velocityX * BOUNCINESS;
 
-            // Check if it's a goal (crosses the goal line on the right wall)
-            if (y >= Game.CANVAS_HEIGHT / 2 + 100) {
-                System.out.println("Goal on the right side!");
-                x = Game.CANVAS_WIDTH/2;
-                y = BALL_DIAMETER;
-                setVelocity(5, 0);
-                p1.resetPlayer();
-                p2.resetPlayer();
-            }
+            checkGoal(p1, p2, 5);
         }
+    }
+
+    private void checkGoal(Player p1, Player p2, int xPos) {
+        if (y >= Game.CANVAS_HEIGHT / 2 + 100) {
+            x = Game.CANVAS_WIDTH / 2;
+            y = BALL_DIAMETER;
+            setVelocity(xPos, 0);
+            p1.resetPlayer();
+            p2.resetPlayer();
+        }
+    }
+
+    private double[] ballCenter() {
+        double ballCenterX = x + BALL_DIAMETER / 2;
+        double ballCenterY = y + BALL_DIAMETER / 2;
+
+        return new double[] { ballCenterX, ballCenterY };
+    }
+
+    private double[] nearestPoint(Picture player, double[] ballCenter) {
+        // Find the nearest point of the ball limits
+        double nearestX = Math.max(player.getX(), Math.min(ballCenter[0], player.getX() + player.getWidth()));
+        double nearestY = Math.max(player.getY(), Math.min(ballCenter[1], player.getY() + player.getHeight()));
+
+        return new double[] { nearestX, nearestY };
+    }
+
+    private double[] calculateDistance(double[] ballCenter, double[] nearestPoint) {
+        double distanceX = ballCenter[0] - nearestPoint[0];
+        double distanceY = ballCenter[1] - nearestPoint[1];
+
+        return new double[] { distanceX, distanceY };
     }
 
     private boolean isTouching(Picture player) {
 
-        double ballCenterX = x + BALL_DIAMETER / 2;
-        double ballCenterY = y + BALL_DIAMETER / 2;
-
-        // Find the nearest point on the rectangle to the ball
-        double nearestX = Math.max(player.getX(), Math.min(ballCenterX, player.getX() + player.getWidth()));
-        double nearestY = Math.max(player.getY(), Math.min(ballCenterY, player.getY() + player.getHeight()));
-
-        double distanceX = ballCenterX - nearestX;
-        double distanceY = ballCenterY - nearestY;
-        double distanceSquared = distanceX * distanceX + distanceY * distanceY;
+        double[] ballCenter = ballCenter();
+        double[] nearestPoint = nearestPoint(player, ballCenter);
+        double[] distance = calculateDistance(ballCenter, nearestPoint);
+        double distanceSquared = distance[0] * distance[0] + distance[1] * distance[1];
 
         // If the distance is less than or equal to the ball's radius, they are touching
         return distanceSquared <= (BALL_DIAMETER / 2) * (BALL_DIAMETER / 2);
@@ -125,26 +139,20 @@ public class Ball {
             return 0;
         }
 
-        double ballCenterX = x + BALL_DIAMETER / 2;
-        double ballCenterY = y + BALL_DIAMETER / 2;
+        double[] ballCenter = ballCenter();
+        double[] nearestPoint = nearestPoint(player, ballCenter);
+        double[] distance = calculateDistance(ballCenter, nearestPoint);
 
-        // Find the nearest point on the rectangle to the ball
-        double nearestX = Math.max(player.getX(), Math.min(ballCenterX, player.getX() + player.getWidth()));
-        double nearestY = Math.max(player.getY(), Math.min(ballCenterY, player.getY() + player.getHeight()));
-
-        double vectorX = nearestX - ballCenterX;
-        double vectorY = nearestY - ballCenterY;
-
-        int[] up = { 0, 1 }; // Normal for the top side
-        int[] down = { 0, -1 }; // Normal for the bottom side
+        int[] up = { 0, -1 }; // Normal for the top side
+        int[] down = { 0, 1 }; // Normal for the bottom side
         int[] left = { -1, 0 }; // Normal for the left side
         int[] right = { 1, 0 }; // Normal for the right side
 
         // Calculate dot products with each side's normal vector
-        double dotUp = vectorX * up[0] + vectorY * up[1];
-        double dotDown = vectorX * down[0] + vectorY * down[1];
-        double dotLeft = vectorX * left[0] + vectorY * left[1];
-        double dotRight = vectorX * right[0] + vectorY * right[1];
+        double dotUp = distance[0] * up[0] + distance[1] * up[1];
+        double dotDown = distance[0] * down[0] + distance[1] * down[1];
+        double dotLeft = distance[0] * left[0] + distance[1] * left[1];
+        double dotRight = distance[0] * right[0] + distance[1] * right[1];
 
         // Determine which side is closest by comparing dot products
         double maxDot = Math.max(Math.max(dotUp, dotDown), Math.max(dotLeft, dotRight));
@@ -161,36 +169,36 @@ public class Ball {
         }
     }
 
-    public void getKickCollisionsForLeftPlayer(Picture leftPlayer) {
+    private void getKickCollisionsForLeftPlayer(Picture leftPlayer) {
         switch (getCollisionsForKick(leftPlayer)) {
             case 1:// top
-                setVelocity(10, -20);
+                setVelocity(15, -20);
                 break;
             case 2:// down
                 setVelocity(10, -10);
                 break;
             case 3:// left
-                setVelocity(20, -5);
+                setVelocity(25, -5);
                 break;
             case 4:// right
-                setVelocity(20, -5);
+                setVelocity(25, -5);
                 break;
         }
     }
 
-    public void getKickCollisionsForRightPlayer(Picture leftPlayer) {
+    private void getKickCollisionsForRightPlayer(Picture leftPlayer) {
         switch (getCollisionsForKick(leftPlayer)) {
             case 1:// top
-                setVelocity(-10, -20);
+                setVelocity(-15, -20);
                 break;
             case 2:// down
                 setVelocity(-10, -10);
                 break;
             case 3:// left
-                setVelocity(-20, -5);
+                setVelocity(-25, -5);
                 break;
             case 4:// right
-                setVelocity(-20, -5);
+                setVelocity(-25, -5);
                 break;
         }
     }
