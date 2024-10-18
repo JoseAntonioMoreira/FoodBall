@@ -75,31 +75,29 @@ public class Ball {
             velocityX = -velocityX * BOUNCINESS;
 
             // Check if it's a goal (crosses the goal line on the left wall)
-            if (y >= Game.CANVAS_HEIGHT / 2) {
+            if (y >= Game.CANVAS_HEIGHT / 2 + 100) {
                 System.out.println("Goal on the left side!");
                 x = Game.CANVAS_WIDTH/2;
                 y = BALL_DIAMETER;
                 setVelocity(-5, 0);
                 p1.resetPlayer();
                 p2.resetPlayer();
-                // Add any additional logic for scoring a goal
             }
         }
 
         // Check for collision with the right wall
-        if (x + BALL_DIAMETER >= Game.CANVAS_WIDTH) {
-            x = Game.CANVAS_WIDTH - BALL_DIAMETER;
+        if (x + BALL_DIAMETER >= Game.CANVAS_WIDTH + 70) {
+            x = (Game.CANVAS_WIDTH + 70) - BALL_DIAMETER;
             velocityX = -velocityX * BOUNCINESS;
 
             // Check if it's a goal (crosses the goal line on the right wall)
-            if (y >= Game.CANVAS_HEIGHT / 2) {
+            if (y >= Game.CANVAS_HEIGHT / 2 + 100) {
                 System.out.println("Goal on the right side!");
                 x = Game.CANVAS_WIDTH/2;
                 y = BALL_DIAMETER;
                 setVelocity(5, 0);
                 p1.resetPlayer();
                 p2.resetPlayer();
-                // Add any additional logic for scoring a goal
             }
         }
     }

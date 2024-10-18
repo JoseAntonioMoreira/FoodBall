@@ -1,22 +1,37 @@
-import org.academiadecodigo.simplegraphics.graphics.Rectangle;
+import org.academiadecodigo.simplegraphics.pictures.Picture;
 
 public class Game {
     public static final int CANVAS_WIDTH = 1250;
     public static final int CANVAS_HEIGHT = 720;
 
-    Rectangle canvas;
+    Picture canvas;
     Ball ball;
-    //Picture player;
     Player p1;
     Player p2;
 
     public Game(){
-        canvas = new Rectangle(10, 10, CANVAS_WIDTH, CANVAS_HEIGHT);
+        canvas = new Picture(CANVAS_WIDTH, CANVAS_HEIGHT,"rsc/stadium.png");
+        canvas.translate(-1550, -910);
+        canvas.grow(-300, 0);
         canvas.draw();
+        setupGoals();
         ball = new Ball();
+        p1 = new Player(ControlScheme.WAD,50.0,500.0,"rsc/burger.png",-75,-75);
+        p2 = new Player(ControlScheme.ARROWS,1200.0,500.0, "rsc/pizza1.png",-35, -75);
+    }
 
-        p1 = new Player(ControlScheme.WAD,50.0,500.0);
-        p2 = new Player(ControlScheme.ARROWS,1200.0,500.0);
+    public void setupGoals(){
+        Picture goal;
+        goal = new Picture(0,0,"rsc/baliza.png");
+        goal.grow(-50, -200);
+        goal.translate(-55, 250);
+        goal.draw();
+
+        goal = new Picture(0,0,"rsc/baliza.png");
+        goal.grow(-135, -200);
+        goal.translate(1190, 250);
+        goal.draw();
+
     }
 
     public void update(long millis) throws InterruptedException {

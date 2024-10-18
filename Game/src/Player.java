@@ -15,6 +15,9 @@ public class Player implements KeyboardHandler {
     private double y;
     private double velocityX;
     private double velocityY;
+    private String imgPath;
+    private int offsetX;
+    private int offsetY;
     private static final double GRAVITY = 0.2;
     private static final double FRICTION = 0.9;
 
@@ -22,13 +25,17 @@ public class Player implements KeyboardHandler {
     private Picture playerImage;
     private final ControlScheme controlScheme;
 
-    public Player(ControlScheme controlScheme, Double x, Double y) {
+    public Player(ControlScheme controlScheme, Double x, Double y, String imgPath, int offsetX, int offsetY) {
         this.controlScheme = controlScheme;
         this.x = x;
         this.y = y;
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
+        this.imgPath = imgPath;
         this.initialX = x;
         this.initialY = y;
-        playerImage = new Picture(PLAYER_WIDTH, PLAYER_HEIGHT);
+        playerImage = new Picture(PLAYER_WIDTH, PLAYER_HEIGHT, this.imgPath);
+        playerImage.grow(offsetX, offsetY);
         playerImage.draw();
         this.keyboard = new Keyboard(this);
 
@@ -42,8 +49,8 @@ public class Player implements KeyboardHandler {
     public double getY() {
         return this.y;
     }
-    
-    public void resetPlayer(){
+
+    public void resetPlayer() {
         x = initialX;
         y = initialY;
     }
@@ -109,7 +116,7 @@ public class Player implements KeyboardHandler {
                 }
                 break;
             case KeyboardEvent.KEY_H:
-            System.exit(0);
+                System.exit(0);
                 break;
         }
     }
@@ -144,15 +151,18 @@ public class Player implements KeyboardHandler {
         }
 
         // Check for collision with the right wall
-        if (x + PLAYER_WIDTH >= Game.CANVAS_WIDTH) {
-            x = Game.CANVAS_WIDTH - PLAYER_WIDTH;
+        if (x + PLAYER_WIDTH >= Game.CANVAS_WIDTH + 25) {
+            x = (Game.CANVAS_WIDTH + 25) - PLAYER_WIDTH;
         }
     }
 
     private void show() {
         playerImage.delete();
-        playerImage = new Picture(PLAYER_WIDTH, PLAYER_HEIGHT);
-        playerImage.translate(x, y);
+        double deltaX = (x - playerImage.getX());
+        double deltaY = y - playerImage.getY();
+        if (Math.abs(deltaX) > 1 || Math.abs(deltaY) > 1) {
+            playerImage.translate(deltaX, deltaY);
+        }
         playerImage.draw();
     }
 
