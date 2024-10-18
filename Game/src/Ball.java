@@ -186,8 +186,8 @@ public class Ball {
         }
     }
 
-    private void getKickCollisionsForRightPlayer(Picture leftPlayer) {
-        switch (getCollisionsForKick(leftPlayer)) {
+    private void getKickCollisionsForRightPlayer(Picture RightPlayer) {
+        switch (getCollisionsForKick(RightPlayer)) {
             case 1:// top
                 setVelocity(-15, -20);
                 break;
