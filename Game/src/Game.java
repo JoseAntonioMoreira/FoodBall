@@ -17,7 +17,7 @@ public class Game {
 
         score = new Score();
 
-       // Media.playLoopSound();
+        Media.playLoopSound();
 
         ball = new Ball(score);// setup ball
 
