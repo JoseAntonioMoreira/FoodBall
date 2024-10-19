@@ -81,14 +81,27 @@ public class Player implements KeyboardHandler {
         }
 
         // Check for collision with the left wall
-        if (x <= 0) {
-            x = 0;
+        if (controlScheme == ControlScheme.WAD) {
+            if (x <= 0) {
+                x = 0;
+            }
+        } else {
+            if (x <= 650) {
+                x = 650;
+            }
         }
 
         // Check for collision with the right wall
-        if (x + PLAYER_WIDTH >= Game.CANVAS_WIDTH + 25) {
-            x = (Game.CANVAS_WIDTH + 25) - PLAYER_WIDTH;
+        if (controlScheme == ControlScheme.ARROWS) {
+            if (x + PLAYER_WIDTH >= Game.CANVAS_WIDTH + 25) {
+                x = (Game.CANVAS_WIDTH + 25) - PLAYER_WIDTH;
+            }
+        } else {
+            if (x + PLAYER_WIDTH >= 600) {
+                x = 600 - PLAYER_WIDTH;
+            }
         }
+
     }
 
     private void show() {

@@ -14,11 +14,13 @@ public class Ball {
     private double velocityX;
     private double velocityY;
     private Ellipse ballVisual;
+    private Score score;
 
-    public Ball() {
+    public Ball(Score score) {
         x = Game.CANVAS_WIDTH / 2 + 20;
         y = Game.CANVAS_HEIGHT / 2;
         ballVisual = new Ellipse(x, y, BALL_DIAMETER, BALL_DIAMETER);
+        this.score = score;
     }
 
     public double getX() {
@@ -78,7 +80,11 @@ public class Ball {
             x = 0;
             velocityX = -velocityX * BOUNCINESS;
 
-            checkGoal(p1, p2, -5);
+            if (checkGoal(p1, p2, -5)) {
+                if (score.player2Scored()) {
+                    setVelocity(0, 0);
+                }
+            }
         }
 
         // Check for collision with the right wall
@@ -86,18 +92,24 @@ public class Ball {
             x = (Game.CANVAS_WIDTH + 70) - BALL_DIAMETER;
             velocityX = -velocityX * BOUNCINESS;
 
-            checkGoal(p1, p2, 5);
+            if (checkGoal(p1, p2, 5)) {
+                if (score.player1Scored()) {
+                    setVelocity(0, 0);
+                }
+            }
         }
     }
 
-    private void checkGoal(Player p1, Player p2, int xPos) {
+    private boolean checkGoal(Player p1, Player p2, int xPos) {
         if (y >= Game.CANVAS_HEIGHT / 2 + 100) {
             x = Game.CANVAS_WIDTH / 2;
             y = BALL_DIAMETER;
             setVelocity(xPos, 0);
             p1.resetPlayer();
             p2.resetPlayer();
+            return true;
         }
+        return false;
     }
 
     private double[] ballCenter() {
@@ -156,6 +168,8 @@ public class Ball {
 
         // Determine which side is closest by comparing dot products
         double maxDot = Math.max(Math.max(dotUp, dotDown), Math.max(dotLeft, dotRight));
+
+        score.resetAnnouncer();
 
         // Return which side of the rectangle is being touched
         if (maxDot == dotUp) {

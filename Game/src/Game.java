@@ -5,25 +5,33 @@ public class Game {
     public static final int CANVAS_HEIGHT = 720;
 
     Picture canvas;
+    Score score;
     Ball ball;
     Player p1;
     Player p2;
 
     public Game() {
-        canvas = new Picture(CANVAS_WIDTH, CANVAS_HEIGHT, "rsc/stadium.png");
-        canvas.translate(-1550, -910);
-        canvas.grow(-300, 0);
-        canvas.draw();
+        setupCanvas();
 
         setupGoals();
 
-        ball = new Ball();
+        score = new Score();
 
+        ball = new Ball(score);// setup ball
+
+        // setup players
         p1 = new Player(ControlScheme.WAD, 50.0, 500.0, "rsc/burger.png", -75, -75);
         p2 = new Player(ControlScheme.ARROWS, 1200.0, 500.0, "rsc/pizza1.png", -35, -75);
     }
 
-    public void setupGoals() {
+    private void setupCanvas() {
+        canvas = new Picture(CANVAS_WIDTH, CANVAS_HEIGHT, "rsc/stadium.png");
+        canvas.translate(-1550, -910);
+        canvas.grow(-300, 0);
+        canvas.draw();
+    }
+
+    private void setupGoals() {
         Picture goal;
         goal = new Picture(0, 0, "rsc/baliza.png");
         goal.grow(-50, -200);
