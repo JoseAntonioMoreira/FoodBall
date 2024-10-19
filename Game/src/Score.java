@@ -3,7 +3,7 @@ import org.academiadecodigo.simplegraphics.graphics.Text;
 public class Score {
     private int p1Score;
     private int p2Score;
-    private final int MAX_SCORE = 3;
+    private final int MAX_SCORE = 5;
     private Text announcerText;
     private Text scoreBoard;
 
