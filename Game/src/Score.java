@@ -10,7 +10,7 @@ public class Score {
     public Score() {
         p1Score = 0;
         p2Score = 0;
-        scoreBoard = new Text(660, 245, p1Score + " - " + p2Score);// redundency to make update score more abstract
+        scoreBoard = new Text(660, 245, p1Score + " - " + p2Score);// redundancy to make update score more abstract
         updateScore();
     }
 
@@ -25,6 +25,7 @@ public class Score {
         p1Score++;
         updateScore();
         scoreAnnouncer("Burger Scores !");
+        Media.playSound();
         return checkForWinner();
     }
 
@@ -32,6 +33,7 @@ public class Score {
         p2Score++;
         updateScore();
         scoreAnnouncer("Pizza Scores !");
+        Media.playSound();
         return checkForWinner();
     }
 

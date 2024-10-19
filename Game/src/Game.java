@@ -1,8 +1,8 @@
 import org.academiadecodigo.simplegraphics.pictures.Picture;
 
 public class Game {
-    public static final int CANVAS_WIDTH = 1250;
-    public static final int CANVAS_HEIGHT = 720;
+    public static final double CANVAS_WIDTH = 1250;
+    public static final double CANVAS_HEIGHT = 720;
 
     Picture canvas;
     Score score;
@@ -16,6 +16,8 @@ public class Game {
         setupGoals();
 
         score = new Score();
+
+       // Media.playLoopSound();
 
         ball = new Ball(score);// setup ball
 

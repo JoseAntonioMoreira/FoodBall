@@ -2,37 +2,26 @@ import org.academiadecodigo.simplegraphics.graphics.Ellipse;
 import org.academiadecodigo.simplegraphics.pictures.Picture;
 
 public class Ball {
-    public static final int BALL_DIAMETER = 40;
+    public static final double BALL_DIAMETER = 40;
     public static final double GRAVITY = 0.2; // bigger the quicker is falls (default value: 0.2)
     public static final double BOUNCINESS = 0.9; // 1 or more infinite bouncing ---- 0 no bouncing (default value: 0.9)
-    public static final double FRICTION = 0.996;// 0 full friction stops instantly ---- 1 infinite movement(default
-                                                // value: 0.996)
+    public static final double FRICTION = 0.996;// 0 full friction stops instantly ---- 1 infinite movement(default value: 0.996)
 
+
+    private final Score SCORE;
     // Ball properties
     private double x;
     private double y;
     private double velocityX;
     private double velocityY;
     private Ellipse ballVisual;
-    private Score score;
+
 
     public Ball(Score score) {
         x = Game.CANVAS_WIDTH / 2 + 20;
         y = Game.CANVAS_HEIGHT / 2;
         ballVisual = new Ellipse(x, y, BALL_DIAMETER, BALL_DIAMETER);
-        this.score = score;
-    }
-
-    public double getX() {
-        return x;
-    }
-
-    public double getY() {
-        return y;
-    }
-
-    public int getBallDiameter() {
-        return BALL_DIAMETER;
+        this.SCORE = score;
     }
 
     // Optional: Set ball velocity if needed
@@ -81,7 +70,7 @@ public class Ball {
             velocityX = -velocityX * BOUNCINESS;
 
             if (checkGoal(p1, p2, -5)) {
-                if (score.player2Scored()) {
+                if (SCORE.player2Scored()) {
                     setVelocity(0, 0);
                 }
             }
@@ -93,7 +82,7 @@ public class Ball {
             velocityX = -velocityX * BOUNCINESS;
 
             if (checkGoal(p1, p2, 5)) {
-                if (score.player1Scored()) {
+                if (SCORE.player1Scored()) {
                     setVelocity(0, 0);
                 }
             }
@@ -116,7 +105,7 @@ public class Ball {
         double ballCenterX = x + BALL_DIAMETER / 2;
         double ballCenterY = y + BALL_DIAMETER / 2;
 
-        return new double[] { ballCenterX, ballCenterY };
+        return new double[]{ballCenterX, ballCenterY};
     }
 
     private double[] nearestPoint(Picture player, double[] ballCenter) {
@@ -124,14 +113,14 @@ public class Ball {
         double nearestX = Math.max(player.getX(), Math.min(ballCenter[0], player.getX() + player.getWidth()));
         double nearestY = Math.max(player.getY(), Math.min(ballCenter[1], player.getY() + player.getHeight()));
 
-        return new double[] { nearestX, nearestY };
+        return new double[]{nearestX, nearestY};
     }
 
     private double[] calculateDistance(double[] ballCenter, double[] nearestPoint) {
         double distanceX = ballCenter[0] - nearestPoint[0];
         double distanceY = ballCenter[1] - nearestPoint[1];
 
-        return new double[] { distanceX, distanceY };
+        return new double[]{distanceX, distanceY};
     }
 
     private boolean isTouching(Picture player) {
@@ -155,10 +144,10 @@ public class Ball {
         double[] nearestPoint = nearestPoint(player, ballCenter);
         double[] distance = calculateDistance(ballCenter, nearestPoint);
 
-        int[] up = { 0, -1 }; // Normal for the top side
-        int[] down = { 0, 1 }; // Normal for the bottom side
-        int[] left = { -1, 0 }; // Normal for the left side
-        int[] right = { 1, 0 }; // Normal for the right side
+        int[] up = {0, -1}; // Normal for the top side
+        int[] down = {0, 1}; // Normal for the bottom side
+        int[] left = {-1, 0}; // Normal for the left side
+        int[] right = {1, 0}; // Normal for the right side
 
         // Calculate dot products with each side's normal vector
         double dotUp = distance[0] * up[0] + distance[1] * up[1];
@@ -169,7 +158,7 @@ public class Ball {
         // Determine which side is closest by comparing dot products
         double maxDot = Math.max(Math.max(dotUp, dotDown), Math.max(dotLeft, dotRight));
 
-        score.resetAnnouncer();
+        SCORE.resetAnnouncer();
 
         // Return which side of the rectangle is being touched
         if (maxDot == dotUp) {
