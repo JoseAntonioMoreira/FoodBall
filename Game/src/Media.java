@@ -1,5 +1,9 @@
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.Objects;
+
 import javazoom.jl.player.Player;
 
 import javax.sound.sampled.AudioInputStream;
@@ -46,8 +50,16 @@ public class Media {
     public static void playLoopSound() {
         new Thread(() -> {
             try {
-                FileInputStream fileInputStream = new FileInputStream("rsc/background.mp3");
-                Player player = new Player(fileInputStream);
+                // Use the class loader to get the resource stream in a static context
+                InputStream inputStream = Media.class.getClassLoader().getResourceAsStream("rsc/background.mp3");
+
+                if (inputStream == null) {
+                    throw new RuntimeException("Sound file not found " );
+                }
+
+                // Wrap the input stream in a BufferedInputStream to support mark/reset
+                BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
+                Player player = new Player(inputStream);
                 player.play();
             } catch (Exception e) {
                 System.out.println(e.getMessage());
@@ -58,14 +70,25 @@ public class Media {
     public static void playSound() {
         new Thread(() -> {
             try {
-                File soundFile = new File("rsc/goal.wav");
-                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundFile);
+                // Use the class loader to get the resource stream in a static context
+                InputStream inputStream = Media.class.getClassLoader().getResourceAsStream("rsc/goal.wav");
+
+                if (inputStream == null) {
+                    throw new RuntimeException("Sound file not found " );
+                }
+
+                // Wrap the input stream in a BufferedInputStream to support mark/reset
+                BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
+
+                // Get the audio input stream
+                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(bufferedInputStream);
+
+
                 Clip clip = AudioSystem.getClip();
                 clip.open(audioInputStream);
                 clip.start();
                 Thread.sleep(2000);
                 clip.close();
-                System.out.println("testss");
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
